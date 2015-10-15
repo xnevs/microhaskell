@@ -18,6 +18,8 @@ neg b = if b then False else True ;
 -- land :: Bool -> Bool -> Bool ;
 -- lor :: Bool -> Bool -> Bool ;
 
+land :: Bool -> Bool -> Bool ;
+land p q = if p then q else False ;
 
 -- Arithmetic functions
 
@@ -33,6 +35,9 @@ times m n = if 0 < n then m + times m (n - 1)
 
 divides :: Integer -> Integer -> Bool ;
 divides m n = if n == 0 then True
+        else if m == 0 then False
+        else if n < 0 then divides m (0-n)
+        else if m < 0 then divides (0-m) n
         else if n < m then False 
         else divides m (n - m);
 
@@ -48,10 +53,12 @@ double = times 2 ;
 
 -- Exercise: define multSeven telling whether a number is a multiple of 7.
 
+multSeven :: Integer -> Bool ;
+multSeven = divides 7 ;
 
 -- Taking a function as argument
 
-twice :: (Integer -> Integer) -> Integer -> Integer ;
+twice :: (Integer -> Integer) -> (Integer -> Integer) ;
 twice f n = f (f n) ;
 
 -- Exercise: write a function
@@ -61,6 +68,12 @@ twice f n = f (f n) ;
 -- pow a b
 -- which computes a to the power of b
 
+rpt :: Integer -> (Integer -> Integer) -> Integer -> Integer ;
+rpt m f n = if m == 0 then n
+            else rpt (m-1) f (f n) ;
+
+pow :: Integer -> Integer -> Integer ;
+pow a b = rpt b (times a) 1 ;
 
 -- Representing infinite lists as functions
 
@@ -80,9 +93,17 @@ from m n = m + n - 1 ;
 -- apply f l
 -- which applies the function f on each entry of l (i.e., returns a list)
 
+apply :: (Integer -> Integer) -> (Integer -> Integer) -> (Integer -> Integer) ;
+apply f l n = f (l n) ;
+
 -- Exercise: define a function square returning the square of the input,
 -- and use it to define a list squares of squares of numbers starting with 0.
 
+square :: Integer -> Integer ;
+square x = times x x ;
+
+squares :: Integer -> Integer ;
+squares = apply square (from 0) ;
 
 -- Filtering an infinite list
 
