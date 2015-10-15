@@ -13,8 +13,8 @@ $symb       = [\!\@\#\$\%\^\&\-\+\=\/\<\>\~\:\;\.\?\/\\\~\'\"\|\[\]]
 
    $white+                                  ;   -- whitespace
    \-[\-]+([^$symb].*)?                     ;   -- comments
-   if | then | else | Integer | Bool        {\s -> KEY s}
-   \=\= | \< | \+ | \- | \= | \:\: | \-\>   {\s -> OP s}
+   if | then | else | Integer | Bool | not  {\s -> KEY s}
+   \=\= | \< | \+ | \- | \= | \:\: | \-\> | \&\& | \|\|  {\s -> OP s}
    \( | \) | \;                             {\s -> PUNC s}
    True | False                             {\s -> BOOLEAN (read s)}
    $digit+                                  {\s -> NUM (read s)}

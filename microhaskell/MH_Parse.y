@@ -16,6 +16,7 @@ import MH_Lex
         else                {KEY "else"}
         integertype         {KEY "Integer"}
         booltype            {KEY "Bool"}
+        not                 {KEY "not"}
         '~'                 {OP "=="}
         '<'                 {OP "<"}
         '+'                 {OP "+"}
@@ -23,6 +24,8 @@ import MH_Lex
         '='                 {OP "="}
         colcol              {OP "::"}
         arrow               {OP "->"}
+        land                {OP "&&"}
+        lor                 {OP "||"}
         '('                 {PUNC "("}
         ')'                 {PUNC ")"}
         ';'                 {PUNC ";"}
@@ -33,6 +36,9 @@ import MH_Lex
 
 -- precedence and associativity declarations, lowest precedence first
 
+%left lor
+%left land
+%nonassoc not
 %nonassoc '~' '<'
 %left '+' '-'
 %right arrow
@@ -65,6 +71,10 @@ Exp0 : Exp0 '~' Exp0            {Op ("==", $1, $3)}
      | Exp0 '<' Exp0            {Op ("<", $1, $3)}
      | Exp0 '+' Exp0            {Op ("+", $1, $3)}
      | Exp0 '-' Exp0            {Op ("-", $1, $3)}
+     | Exp0 land Exp0           {Op ("&&", $1, $3)}
+     | Exp0 lor Exp0            {Op ("||", $1, $3)}
+     | not Exp0                 {UOp ("not", $2)}
+     | '-' Exp1                 {UOp ("-", $2)}
      | Exp1                     {$1}
 
 Exp1 : Exp1 Exp2                {Op ("appl", $1, $2)}
@@ -92,6 +102,7 @@ data Exp =
         Boolean Bool |
         Var String |
         Op (String, Exp, Exp) |
+        UOp (String, Exp) |
         Cond (Exp, Exp, Exp) |
         Lam (String, Exp)
         deriving Show
