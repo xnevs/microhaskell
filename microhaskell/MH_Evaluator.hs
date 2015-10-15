@@ -11,6 +11,7 @@ freevars (Var y) = [y]
 freevars (Num _) = []
 freevars (Boolean _) = []
 freevars (Op(op, exp1, exp2)) = (freevars exp1) ++ (freevars exp2)
+freevars (UOp(op, exp1)) = freevars exp1
 freevars (Cond(exp0, exp1, exp2)) =
   (freevars exp0) ++ (freevars exp1) ++ (freevars exp2)
 freevars (Lam(y, exp0)) = filter (\x -> x/=y) (freevars exp0)
@@ -31,14 +32,15 @@ expsubst (Num n) _ _  = (Num n)
 expsubst (Boolean b) _ _  = (Boolean b)
 expsubst (Op(op, exp1, exp2)) x exp =
   Op(op, expsubst exp1 x exp, expsubst exp2 x exp)
+expsubst (UOp(op, exp1)) x exp = UOp(op, expsubst exp1 x exp)
 expsubst (Cond(exp0, exp1, exp2)) x exp =
   Cond(expsubst exp0 x exp, expsubst exp1 x exp, expsubst exp2 x exp)
 expsubst (Lam(y, exp0)) x exp = 
   if x==y then Lam(y, exp0)
   else let xs = freevars exp
         in if notElem y xs then Lam(y, expsubst exp0 x exp)
-	   else let y' = freshen y ((freevars exp0) ++ xs)
-	         in Lam(y', expsubst (expsubst exp0 y (Var y')) x exp)
+           else let y' = freshen y ((freevars exp0) ++ xs)
+                 in Lam(y', expsubst (expsubst exp0 y (Var y')) x exp)
 
 
 evaluate :: Env -> Exp -> Exp
@@ -68,31 +70,55 @@ evaluate env (Op("<", exp1, exp2)) =
       val2 = evaluate env exp2
    in case (val1, val2) of
         (Num m, Num n) -> Boolean (m<n)
-	_ -> error "Runtime type error"
+        _ -> error "Runtime type error"
 
 evaluate env (Op("+", exp1, exp2)) =
   let val1 = evaluate env exp1
       val2 = evaluate env exp2
    in case (val1, val2) of
         (Num m, Num n) -> Num (m+n)
-	_ -> error "Runtime type error"
+        _ -> error "Runtime type error"
 
 evaluate env (Op("-", exp1, exp2)) =
   let val1 = evaluate env exp1
       val2 = evaluate env exp2
    in case (val1, val2) of
         (Num m, Num n) -> Num (m-n)
-	_ -> error "Runtime type error"
+        _ -> error "Runtime type error"
 
 evaluate env (Op("appl", exp1, exp2)) =
   let val1 = evaluate env exp1
    in case val1 of
         (Lam (x, exp0)) -> evaluate env (expsubst exp0 x exp2)
-	_ -> error "Runtime type error"
+        _ -> error "Runtime type error"
 
 evaluate env (Lam (x, exp)) = Lam (x, exp)
 
+evaluate env (Op("&&", exp1, exp2)) =
+   let val1 = evaluate env exp1
+    in case val1 of
+        Boolean False -> Boolean False
+        Boolean True  -> evaluate env exp2
+        _ -> error "Runtime type error"
 
+evaluate env (Op("||", exp1, exp2)) =
+   let val1 = evaluate env exp1
+    in case val1 of
+        Boolean True  -> Boolean True
+        Boolean False -> evaluate env exp2
+        _ -> error "Runtime type error"
+
+evaluate env (UOp("not", exp1)) =
+   let val1 = evaluate env exp1
+    in case val1 of
+        Boolean b  -> Boolean (not b)
+        _ -> error "Runtime type error"
+
+evaluate env (UOp("-", exp1)) =
+   let val1 = evaluate env exp1
+    in case val1 of
+        Num n  -> Num (-n)
+        _ -> error "Runtime type error"
 
   
 
