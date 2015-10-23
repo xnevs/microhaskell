@@ -1,0 +1,19 @@
+Count := 1 ;
+XthPrime := 2 ;
+while Count < X do
+  XthPrime := XthPrime + 1 ;
+  Y := 2 ;
+  (
+   while Y*Y < XthPrime + 1 do
+     Z := 2 ;
+     (
+      while Z < XthPrime do
+        (if Y*Z == XthPrime then Y := XthPrime ; Z := Y
+                            else skip
+        );
+        Z := Z+1
+     );
+     Y := Y+1
+  );
+  if Y < XthPrime + 1 then Count := Count + 1
+             else skip
