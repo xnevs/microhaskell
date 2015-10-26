@@ -5,9 +5,9 @@
 
 -- character classes
 
-$digit		= [0-9]
-$lower          = [a-z]
-$upper   	= [A-Z]
+$digit      = [0-9]
+$lower      = [a-z]
+$upper      = [A-Z]
 
 :-
 
@@ -17,6 +17,14 @@ $upper   	= [A-Z]
 -- [[IMPLEMENT YOUR LEXICAL CLASSES HERE]]
 --
 
+    $white+                                 ;
+    if | then | else | while | do | skip    {\s -> KEY s}
+    \=\= | \< | \+ | \- | \* | \:\=         {\s -> OP s}
+    \( | \) | \;                            {\s -> PUNC s}
+    $digit+                                 {\s -> NUM (read s)}
+    True | False                            {\s -> BOOLEAN (read s)}
+    [$lower $upper][$lower $upper $digit]*  {\s -> LOC s}
+
 
 {
 
@@ -25,8 +33,14 @@ $upper   	= [A-Z]
 data Token =
         --
         -- [[IMPLEMENT YOUR Token TYPE HERE]]
-	--
-	deriving Show
+        --
+    KEY String
+  | OP String
+  | PUNC String
+  | NUM Integer
+  | BOOLEAN Bool
+  | LOC String
+    deriving Show
 
 -- The lexer implements a function
 --

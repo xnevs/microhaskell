@@ -1,2 +1,4 @@
 Imp_Lex.hs
 Imp_Parse.hs
+*.hi
+*.o

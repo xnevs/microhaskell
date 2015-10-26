@@ -21,11 +21,37 @@ import Imp_AbsSyntax
 -- [[DECLARE YOUR TERMINAL SYMBOLS HERE]]
 --
 
+    if      {KEY "if"}
+    then    {KEY "then"}
+    else    {KEY "else"}
+    while   {KEY "while"}
+    do      {KEY "do"}
+    skip    {KEY "skip"}
+    '+'     {OP "+"}
+    '-'     {OP "-"}
+    '*'     {OP "*"}
+    '~'     {OP "=="}
+    '<'     {OP "<"}
+    assign  {OP ":="}
+    '('     {PUNC "("}
+    ')'     {PUNC ")"}
+    ';'     {PUNC ";"}
+    num     {NUM $$}
+    boolean {BOOLEAN $$}
+    loc     {LOC $$}
+
+
 -- precedence and associativity declarations, lowest precedence first
 
 --
 -- [[MAKE PRECEDENCE AND ASSOCIATIVITY DECLARATIONS HERE]]
 --
+
+%nonassoc then else do
+%right ';'
+%nonassoc '~' '<'
+%left '+' '-'
+%left '*'
   
 %%
 
@@ -34,6 +60,23 @@ import Imp_AbsSyntax
 --
 -- [[DEFINE YOUR GRAMMAR AND ITS ACTIONS HERE]]
 --
+
+Com : loc assign AExp               {Assign ($1, $3)}
+    | if BExp then Com else Com     {Cond ($2, $4, $6)}
+    | Com ';' Com                   {Seq ($1, $3)}
+    | skip                          {Skip}
+    | while BExp do Com             {While ($2, $4)}
+    | '(' Com ')'                   {$2}
+
+BExp : boolean                      {Boolean $1}
+     | AExp '~' AExp                {BOp ("==", $1, $3)}
+     | AExp '<' AExp                {BOp ("<", $1, $3)}
+
+AExp : loc                          {Loc $1}
+     | num                          {Num $1}
+     | AExp '+' AExp                {AOp ("+", $1, $3)}
+     | AExp '-' AExp                {AOp ("-", $1, $3)}
+     | AExp '*' AExp                {AOp ("*", $1, $3)}
      
 {
   
