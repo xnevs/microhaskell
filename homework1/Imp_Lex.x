@@ -13,10 +13,6 @@ $upper      = [A-Z]
 
 -- lexical classes
 
---
--- [[IMPLEMENT YOUR LEXICAL CLASSES HERE]]
---
-
     $white+                                 ;
     if | then | else | while | do | skip    {\s -> KEY s}
     \=\= | \< | \+ | \- | \* | \:\=         {\s -> OP s}
@@ -30,16 +26,12 @@ $upper      = [A-Z]
 
 -- The Token type - the action for each lexical class has type String -> Token
 
-data Token =
-        --
-        -- [[IMPLEMENT YOUR Token TYPE HERE]]
-        --
-    KEY String
-  | OP String
-  | PUNC String
-  | NUM Integer
-  | BOOLEAN Bool
-  | LOC String
+data Token = KEY String
+           | OP String
+           | PUNC String
+           | NUM Integer
+           | BOOLEAN Bool
+           | LOC String
     deriving Show
 
 -- The lexer implements a function
