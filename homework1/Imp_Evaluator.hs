@@ -24,6 +24,6 @@ evalCom state c = case c of
                                else evalCom state c2
     Seq (c1, c2)        -> evalCom (evalCom state c1) c2
     Skip                -> state
-    While (cond, c)     -> if evalBExp state cond
-                               then evalCom (evalCom state c) while
+    While (cond, c1)    -> if evalBExp state cond
+                               then evalCom (evalCom state c1) c
                                else state
