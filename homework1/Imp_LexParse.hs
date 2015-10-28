@@ -1,4 +1,4 @@
-module Imp_Interpreter where
+module Imp_LexParse where
 import Imp_Lex
 import Imp_Parse
 

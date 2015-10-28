@@ -17,10 +17,6 @@ import Imp_AbsSyntax
 
 --declaration of terminal symbols
 
---
--- [[DECLARE YOUR TERMINAL SYMBOLS HERE]]
---
-
     if      {KEY "if"}
     then    {KEY "then"}
     else    {KEY "else"}
@@ -43,10 +39,6 @@ import Imp_AbsSyntax
 
 -- precedence and associativity declarations, lowest precedence first
 
---
--- [[MAKE PRECEDENCE AND ASSOCIATIVITY DECLARATIONS HERE]]
---
-
 %nonassoc then else do
 %right ';'
 %nonassoc '~' '<'
@@ -56,10 +48,6 @@ import Imp_AbsSyntax
 %%
 
 -- the grammar
-
---
--- [[DEFINE YOUR GRAMMAR AND ITS ACTIONS HERE]]
---
 
 Com : loc assign AExp               {Assign ($1, $3)}
     | if BExp then Com else Com     {Cond ($2, $4, $6)}
