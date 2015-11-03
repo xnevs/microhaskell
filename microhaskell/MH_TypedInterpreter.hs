@@ -28,21 +28,24 @@ runMH filename = do
   let lexed  = alexScanTokens progtext
       parsed = mh_parseProg lexed
       (typeDecls,termDecls) = unzip parsed
-      declVars = checkVars typeDecls termDecls
+      declVars = checkVars typeDecls termDecls -- conditions 1 & 2 in Note 4
       tenv = (\y -> case lookup y typeDecls of
                Just t -> t
-               Nothing -> error ("No type declaration for variable: " ++ y))
+                -- The case below should never occur due to static analysis
+               Nothing -> error ("No type declaration for  variable: " ++ y))
       env = (\x -> case lookup x termDecls of
                Just exp -> exp
+                -- The case below should never occur due to static analysis
                Nothing -> error ("Lookup error - undefined variable: " ++ x))
-   in if typechecks declVars tenv env
-        then do _ <- putStrLn "Typechecking successful."
-                runIn tenv env
-      else putStrLn "Type errors in program."
+   in if -- this test implements condition 3 in Note 4
+         all (\x -> (all (\y -> elem y declVars) (freevars (env x)))) declVars
+      then if -- this test type checks the program
+              all (\x -> hastype tenv (env x) (tenv x)) declVars
+           then do _ <- putStrLn "Typechecking successful."
+                   runIn tenv env
+           else putStrLn "Type errors in program."
+      else putStrLn "Undeclared variables in program."
 
--- checkVars implements conditions 1 and 2 in Note 4
--- I HAVE NOT YET IMPLEMENTED CONDITION 3
--- Note patterns in definition assume arguments are lists of same length
 
 checkVars [] [] = []
 checkVars ((x,_):tyds) ((y,_):trds) =
@@ -52,12 +55,6 @@ checkVars ((x,_):tyds) ((y,_):trds) =
           else error ("Duplicate declaration for variable " ++ x)
    else error ("Declaration mismatch on variables " ++ x ++ " and " ++ y)
 
-
--- WILL REPLACE THE CLUNKY CODE BELOW WITH A USE OF "all"
-
-typechecks [] _ _ = True
-typechecks (x:xs) tenv env = (hastype tenv (env x) (tenv x)) &&
-                                 typechecks xs tenv env
 
 runIn tenv env = do
      _ <- putStr "MH> "
@@ -76,4 +73,3 @@ runIn tenv env = do
                 Nothing ->
                     do _ <- putStrLn "Type error"
                        runIn tenv env
-
