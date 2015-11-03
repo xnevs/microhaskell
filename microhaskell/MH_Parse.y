@@ -85,7 +85,7 @@ parseError _ = error "MH parse error"
 data Type =
         TypeConst String |
         TypeOp (String, Type, Type)
-        deriving Show
+        deriving (Show, Eq)
   
 data Exp =
         Num Integer |

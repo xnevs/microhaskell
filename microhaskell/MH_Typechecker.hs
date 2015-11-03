@@ -84,21 +84,18 @@ typeof tenv (Op("+", exp1, exp2)) =
     then Just (TypeConst "Integer")
     else Nothing
 
-
 typeof tenv (Op("-", exp1, exp2)) =
   if hastype tenv exp1 (TypeConst "Integer")
         && hastype tenv exp2 (TypeConst "Integer")
     then Just (TypeConst "Integer")
     else Nothing
 
-
-
 typeof tenv (Op("appl", exp1, exp2)) =
   case (typeof tenv exp1) of
     (Just (TypeOp ("->", t1, t2))) ->
        if hastype tenv exp2 t1
          then Just t2
-	 else Nothing
+     else Nothing
     _ -> Nothing
 
 typeof tenv (Lam (x, exp)) = Nothing
