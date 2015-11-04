@@ -43,8 +43,8 @@ hastype tenv (Op("-", exp1, exp2)) t =
     && t == TypeConst "Integer" 
 
 hastype tenv (Op("appl", exp1, exp2)) t =
-  case (typeof tenv exp1) of
-    Just (TypeOp ("->", t1, t2)) -> (hastype tenv exp2 t1) && (t == t2)
+  case (typeof tenv exp2) of
+    Just t' -> hastype tenv exp1 (TypeOp ("->", t', t))
     Nothing -> error "Static type error"
 
 hastype tenv (Lam (x, exp)) (TypeOp ("->", t1, t2)) =
@@ -102,4 +102,3 @@ typeof tenv (Op("appl", exp1, exp2)) =
     _ -> Nothing
 
 typeof tenv (Lam (x, exp)) = Nothing
-
