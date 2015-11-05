@@ -8,10 +8,11 @@ import MH_Evaluator
 toString :: Type -> String
 
 toString (TypeConst str) = str
-toString (TypeOp ("->", TypeConst str, t)) =
-     str ++ " -> " ++ (toString t)
+toString (TypeOp (",", t1, t2)) = "(" ++ (toString t1) ++ ", " ++ (toString t2) ++ ")"
 toString (TypeOp ("->", t1, t2)) =
-     "(" ++ (toString t1) ++ ") -> " ++ (toString t2)
+    case t1 of
+      TypeOp("->", _, _) -> "(" ++ (toString t1) ++ ") -> " ++ (toString t2)
+      _ -> (toString t1) ++ " -> " ++ (toString t2)
 
 -- runMH "file.hs"
 --
