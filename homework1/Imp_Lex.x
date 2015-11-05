@@ -13,13 +13,13 @@ $upper      = [A-Z]
 
 -- lexical classes
 
-    $white+                                 ;
-    if | then | else | while | do | skip    {\s -> KEY s}
-    \=\= | \< | \+ | \- | \* | \:\=         {\s -> OP s}
-    \( | \) | \;                            {\s -> PUNC s}
-    $digit+                                 {\s -> NUM (read s)}
-    True | False                            {\s -> BOOLEAN (read s)}
-    [$lower $upper][$lower $upper $digit]*  {\s -> LOC s}
+    $white+                                       ;
+    if | then | else | while | do | skip          {\s -> KEY s}
+    \=\= | \< | \+ | \- | \* | \:\=               {\s -> OP s}
+    \( | \) | \;                                  {\s -> PUNC s}
+    $digit+                                       {\s -> NUM (read s)}
+    True | False                                  {\s -> BOOLEAN (read s)}
+    [$lower $upper \_][$lower $upper $digit \_]*  {\s -> LOC s}
 
 
 {
