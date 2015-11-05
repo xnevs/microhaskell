@@ -121,6 +121,6 @@ evaluate env (UOp("-", exp1)) =
         _ -> error "Runtime type error"
 
   
-
+evaluate env (Op (",", exp1, exp2)) = Op (",", exp1, exp2)
 
 
