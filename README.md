@@ -11,7 +11,11 @@ The *microhaskell* folder contains the code for the MicroHaskell language, a fra
 * The *mh-original* branch contains the files with basic functionality that serve as a starting point for the tutorials.
 * The *mh-modified* branch contains the files with additional features as added on the tutorials. This branch will usually be merged with *master*.
 
-## homework1
+### lmh
+
+The *lmh* folder contains the code for LMH, which is MicroHaskell with type inferrence.
+
+### homework1
 
 The *homework1* folder contains the files for the first homework. The [handout](https://ucilnica.fmf.uni-lj.si/mod/resource/view.php?id=16922) is available on Moodle.
 
