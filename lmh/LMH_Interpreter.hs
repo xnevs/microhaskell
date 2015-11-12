@@ -56,10 +56,10 @@ inferProg [] tenv _ = tenv
 
 inferProg (x:xs) tenv env =
   let (s',t')  = inferType tenv (env x)
-      tenv' = typeSubstTEnv s' tenv
+      tenv' = typeSubstTEnv tenv s'
       (Just t) = (lookup x tenv')
       s = mgu t t'
-    in inferProg xs (typeSubstTEnv s tenv') env
+    in inferProg xs (typeSubstTEnv tenv' s) env
 
 
 printTypes [] = putStrLn ""
@@ -76,7 +76,7 @@ runIn tenv env = do
                 exp  = lmh_parseExp lexeduser
 		(_, t) = inferType tenv exp
 	      in do _ <- putStr "Type: "
-	            _ <- putStrLn (toString t)
+                    _ <- putStrLn (toString t)
 	 	    _ <- putStr "Value: "
                     _ <- print (evaluate env exp)
                     runIn tenv env

@@ -14,6 +14,8 @@ freevars (Op(op, exp1, exp2)) = (freevars exp1) ++ (freevars exp2)
 freevars (Cond(exp0, exp1, exp2)) =
   (freevars exp0) ++ (freevars exp1) ++ (freevars exp2)
 freevars (Lam(y, exp0)) = filter (\x -> x/=y) (freevars exp0)
+freevars (Let(y, exp1, exp2)) =
+  filter (\x -> x/=y) ((freevars exp1) ++ (freevars exp2))
 
 
 freshen :: String -> [String] -> String
