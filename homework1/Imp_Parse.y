@@ -41,7 +41,6 @@ import Imp_AbsSyntax
 
 %nonassoc then else do
 %right ';'
-%nonassoc '~' '<'
 %left '+' '-'
 %left '*'
   
