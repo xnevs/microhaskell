@@ -64,6 +64,7 @@ AExp : loc                          {Loc $1}
      | AExp '+' AExp                {AOp ("+", $1, $3)}
      | AExp '-' AExp                {AOp ("-", $1, $3)}
      | AExp '*' AExp                {AOp ("*", $1, $3)}
+     | '(' AExp ')'                 {$2}
      
 {
   
