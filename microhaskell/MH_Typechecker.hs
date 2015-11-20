@@ -56,6 +56,8 @@ hastype tenv (Op(",", exp1, exp2)) t =
 hastype tenv (Lam (x, exp)) (TypeOp ("->", t1, t2)) =
   hastype (updatetenv tenv x t1) exp t2
 
+hastype tenv (Op (",", exp1, exp2)) (TypeOp (",", t1, t2)) =
+  hastype tenv exp1 t1 && hastype tenv exp2 t2
 
 typeof :: TypeEnv -> Exp -> Maybe Type
 
@@ -111,3 +113,8 @@ typeof tenv (Op(",", exp1, exp2)) =
         _                  -> Nothing
 
 typeof tenv (Lam (x, exp)) = Nothing
+
+typeof tenv (Op (",", exp1, exp2)) =
+  case (typeof tenv exp1, typeof tenv exp2) of
+    (Just t1, Just t2) -> Just (TypeOp (",", t1, t2))
+    _ -> Nothing

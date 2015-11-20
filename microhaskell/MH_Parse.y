@@ -86,7 +86,7 @@ Exp1 : Exp1 Exp2                {Op ("appl", $1, $2)}
 Exp2 : num                      {Num $1}
      | boolean                  {Boolean $1}
      | var                      {Var $1}
-     | '(' Exp ',' Exp')'       {Op (",", $2, $4)}
+     | '(' Exp ',' Exp ')'      {Op (",", $2, $4)}
      | '(' Exp ')'              {$2}
      
 {
