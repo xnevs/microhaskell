@@ -29,6 +29,7 @@ import MH_Lex
         '('                 {PUNC "("}
         ')'                 {PUNC ")"}
         ';'                 {PUNC ";"}
+        ','                 {PUNC ","}
         num                 {NUM $$}
         boolean             {BOOLEAN $$}
         var                 {VAR $$}
@@ -36,6 +37,7 @@ import MH_Lex
 
 -- precedence and associativity declarations, lowest precedence first
 
+%nonassoc ','
 %left lor
 %left land
 %nonassoc not
@@ -57,6 +59,7 @@ TypeDecl : var colcol Type ';'  {($1,$3)}
 Type : integertype              {TypeConst "Integer"}
      | booltype                 {TypeConst "Bool"}
      | Type arrow Type          {TypeOp ("->", $1, $3)}
+     | '(' Type ',' Type ')'    {TypeOp (",", $2, $4)}
      | '(' Type ')'             {$2}
 
 TermDecl : var Args '=' Exp ';' {($1, lamabstract $2 $4)}
@@ -83,6 +86,7 @@ Exp1 : Exp1 Exp2                {Op ("appl", $1, $2)}
 Exp2 : num                      {Num $1}
      | boolean                  {Boolean $1}
      | var                      {Var $1}
+     | '(' Exp ',' Exp')'       {Op (",", $2, $4)}
      | '(' Exp ')'              {$2}
      
 {

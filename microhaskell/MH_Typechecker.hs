@@ -47,6 +47,12 @@ hastype tenv (Op("appl", exp1, exp2)) t =
     Just t' -> hastype tenv exp1 (TypeOp ("->", t', t))
     Nothing -> error "Static type error"
 
+hastype tenv (Op(",", exp1, exp2)) t =
+    case typeof tenv (Op(",", exp1, exp2)) of
+        Just t' -> t == t'
+        Nothing -> error "Static type error"
+    
+
 hastype tenv (Lam (x, exp)) (TypeOp ("->", t1, t2)) =
   hastype (updatetenv tenv x t1) exp t2
 
@@ -97,5 +103,11 @@ typeof tenv (Op("appl", exp1, exp2)) =
          then Just t2
      else Nothing
     _ -> Nothing
+
+
+typeof tenv (Op(",", exp1, exp2)) =
+    case (typeof tenv exp1, typeof tenv exp2) of
+        (Just t1, Just t2) -> Just $ TypeOp (",", t1, t2)
+        _                  -> Nothing
 
 typeof tenv (Lam (x, exp)) = Nothing

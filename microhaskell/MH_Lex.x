@@ -15,7 +15,7 @@ $symb       = [\!\@\#\$\%\^\&\-\+\=\/\<\>\~\:\;\.\?\/\\\~\'\"\|\[\]]
    \-[\-]+([^$symb].*)?                     ;   -- comments
    if | then | else | Integer | Bool | not  {\s -> KEY s}
    \=\= | \< | \+ | \- | \= | \:\: | \-\> | \&\& | \|\|  {\s -> OP s}
-   \( | \) | \;                             {\s -> PUNC s}
+   \( | \) | \; | \,                        {\s -> PUNC s}
    True | False                             {\s -> BOOLEAN (read s)}
    $digit+                                  {\s -> NUM (read s)}
    [$lower][$lower $upper $digit]*[\']*     {\s -> VAR s}
