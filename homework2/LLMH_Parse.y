@@ -48,27 +48,27 @@ import LLMH_ExpType
 
 -- the grammar
 
-Prog : {- empty -}             {[]}
-     | TermDecl Prog           {$1:$2}
+Prog : {- empty -}              {[]}
+     | TermDecl Prog            {$1:$2}
 
 TermDecl : var Args '=' Exp ';' {($1, lamabstract $2 $4)}
 
-Args : {- empty -}         {[]}
-     | var Args            {$1:$2}
+Args : {- empty -}              {[]}
+     | var Args                 {$1:$2}
 
-Exp  : if Exp then Exp else Exp  {Cond ($2, $4, $6)}
-     | let var '=' Exp in Exp    {Let ($2, $4, $6)}
-     | lam var arrow Exp         {Lam ($2, $4)}
-     | Exp '~' Exp               {Op ("==", $1, $3)}
-     | Exp '<' Exp               {Op ("<", $1, $3)}
-     | Exp '+' Exp               {Op ("+", $1, $3)}
-     | Exp '-' Exp               {Op ("-", $1, $3)}
-     | Exp ':' Exp               {Cons ($1, $3)}
-     | CaseExp                   {$1}
-     | Exp1                      {$1}
+Exp  : if Exp then Exp else Exp {Cond ($2, $4, $6)}
+     | let var '=' Exp in Exp   {Let ($2, $4, $6)}
+     | lam var arrow Exp        {Lam ($2, $4)}
+     | Exp '~' Exp              {Op ("==", $1, $3)}
+     | Exp '<' Exp              {Op ("<", $1, $3)}
+     | Exp '+' Exp              {Op ("+", $1, $3)}
+     | Exp '-' Exp              {Op ("-", $1, $3)}
+     | Exp ':' Exp              {Cons ($1, $3)}
+     | CaseExp                  {$1}
+     | Exp1                     {$1}
 
 CaseExp : case Exp of just var arrow Exp ';' nothing arrow Exp {MybCase ($2, $5, $7, $11)}
-        | case Exp of nil arrow Exp ';' var ':' var arrow Exp {ListCase ($2, $6, $8, $10, $12)}
+        | case Exp of nil arrow Exp ';' var ':' var arrow Exp  {ListCase ($2, $6, $8, $10, $12)}
 
 Exp1 : Exp1 Exp2           {Op ("appl", $1, $2)}
      | Exp2                {$1}

@@ -70,3 +70,21 @@ evaluate env (Lam (x, exp)) = Lam (x, exp)
 --
 --     Jst  Nthg  MybCase  Nil  Cons  ListCase
 --
+
+evaluate env Jst = Jst
+
+evaluate env Nthg = Nthg
+
+evaluate env (MybCase (exp,y,exp1,exp2)) =
+    case evaluate env exp of
+        Op ("appl",Jst,exp1') -> evaluate env $ expsubst exp1 y exp1'
+        Nthg                  -> evaluate env exp2
+
+evaluate env Nil = Nil
+
+evaluate env Cons (exp1,exp2) = Cons (exp1, exp2)
+
+evaluate env (ListCase (exp,exp1,y,z,exp2)) =
+    case evaluate env exp of
+        Nil                -> evaluate env exp1
+        Cons (exp1',exp2') -> evaluate env $ expsubst exp2 y exp1'
