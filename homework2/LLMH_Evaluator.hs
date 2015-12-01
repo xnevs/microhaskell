@@ -60,6 +60,7 @@ evaluate env (Op("-", exp1, exp2)) =
 evaluate env (Op("appl", exp1, exp2)) =
   let val1 = evaluate env exp1
   in case val1 of
+    Jst -> Op ("appl", Jst, exp2)
     (Lam (x, exp0)) -> evaluate env (expsubst exp0 x exp2)
     _ -> error "Runtime type error"
 
@@ -82,9 +83,14 @@ evaluate env (MybCase (exp,y,exp1,exp2)) =
 
 evaluate env Nil = Nil
 
-evaluate env Cons (exp1,exp2) = Cons (exp1, exp2)
+evaluate env (Cons (exp1,exp2)) = Cons (exp1,exp2)
 
 evaluate env (ListCase (exp,exp1,y,z,exp2)) =
     case evaluate env exp of
         Nil                -> evaluate env exp1
-        Cons (exp1',exp2') -> evaluate env $ expsubst exp2 y exp1'
+        Cons (exp1',exp2') -> evaluate env $
+            let ys = freevars exp1'
+            in if notElem z ys
+                then expsubst (expsubst exp2 y exp1') z exp2'
+                else let z' = freshen z ys
+                     in expsubst (expsubst (expsubst exp2 z (Var z')) y exp1') z' exp2'

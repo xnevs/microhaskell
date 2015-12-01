@@ -101,3 +101,68 @@ inferType tenv (Let(x, exp1, exp2)) as =
 --
 --     Jst  Nthg  MybCase  Nil  Cons  ListCase
 --
+
+inferType tenv Jst as =
+    let a = freshtvar as
+    in  ([], Arrow (TypeVar a,Myb $ TypeVar a), a:as)
+    
+inferType tenv Nthg as =
+    let a = freshtvar as
+    in  ([], Myb $ TypeVar a, a:as)
+
+inferType tenv (MybCase (exp0,y,exp1,exp2)) as =
+    let (s0, t0, as0) = inferType tenv exp0 as
+        a1' = freshtvar as0
+        s0' = mgu t0 (Myb $ TypeVar a1')
+        t0' = typeSubst t0 s0'
+        as0' = a1':as0
+
+        tenv1 = updateTEnv (typeSubstTEnv (typeSubstTEnv tenv s0) s0') y (TypeVar a1')
+        (s1,t1,as1') = inferType tenv1 exp1 as0'
+        s1' = []
+        p1 = composeSubst s1 s1'
+        t1' = typeSubst t1 s1'
+
+        tenv2 = typeSubstTEnv (typeSubstTEnv (typeSubstTEnv tenv s0) s0') p1
+        (s2,t2,as2') = inferType tenv2 exp2 as1'
+        s2' = mgu t1' t2
+        p2 = composeSubstList [p1,s2,s2']
+        t2' = typeSubst t2 s2'
+        
+        s = composeSubstList [s0,s0',p2]
+    in  s0' `seq` s1' `seq` s2' `seq` (s, t2', as2')
+
+inferType tenv Nil as =
+    let a = freshtvar as
+    in  ([], List $ TypeVar a, a:as)
+
+inferType tenv (Cons (exp1,exp2)) as =
+    let (s1, t1, as1) = inferType tenv exp1 as
+        tenv' = typeSubstTEnv tenv s1
+        (s2, t2, as2) = inferType tenv' exp2 as1
+        s3 = mgu (List t1) t2
+        s = composeSubstList [s1,s2,s3]
+    in  s3 `seq` (restrict s (tvarsTEnv tenv), typeSubst t2 s3, as2)
+
+
+inferType tenv (ListCase (exp0,exp1,y,z,exp2)) as =
+    let (s0, t0, as0) = inferType tenv exp0 as
+        a1' = freshtvar as0
+        s0' = mgu t0 (List $ TypeVar a1')
+        t0' = typeSubst t0 s0'
+        as0' = a1':as0
+
+        tenv1 = typeSubstTEnv (typeSubstTEnv tenv s0) s0'
+        (s1,t1,as1') = inferType tenv1 exp1 as0'
+        s1' = []
+        p1 = composeSubst s1 s1'
+        t1' = typeSubst t1 s1'
+
+        tenv2 = updateTEnv (updateTEnv (typeSubstTEnv (typeSubstTEnv (typeSubstTEnv tenv s0) s0') p1) y (TypeVar a1')) z (List $ TypeVar a1')
+        (s2,t2,as2') = inferType tenv2 exp2 as1'
+        s2' = mgu t1' t2
+        p2 = composeSubstList [p1,s2,s2']
+        t2' = typeSubst t2 s2'
+        
+        s = composeSubstList [s0,s0',p2]
+    in  s0' `seq` s1' `seq` s2' `seq` (s, t2', as2')

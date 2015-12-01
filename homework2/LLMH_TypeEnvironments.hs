@@ -3,6 +3,8 @@ module LLMH_TypeEnvironments where
 import LLMH_ExpType
 import LLMH_Evaluator
 
+import Debug.Trace
+
 --------------------------------------------------------------------------
 
 --
@@ -120,7 +122,7 @@ mguFind s (List t1) (List t2) = mguFind s t1 t2
 
 mguFind s (Myb t1) (Myb t2) = mguFind s t1 t2
 
-mguFind s t1 t2 = error "Unification failure." 
+mguFind s t1 t2 = error ("Unification failure. "++ show t1 ++ " <-> " ++ show t2)
 
 
 -----------------------------------------------------------------------------
