@@ -140,7 +140,7 @@ inferType tenv (Cons (exp1,exp2)) as =
     let (s1, t1, as1) = inferType tenv exp1 as
         tenv' = typeSubstTEnv tenv s1
         (s2, t2, as2) = inferType tenv' exp2 as1
-        s3 = mgu (List t1) t2
+        s3 = mgu (List $ typeSubst t1 s2) t2
         s = composeSubstList [s1,s2,s3]
     in  s3 `seq` (restrict s (tvarsTEnv tenv), typeSubst t2 s3, as2)
 
