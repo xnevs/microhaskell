@@ -61,3 +61,11 @@ primes = sieve (from 2) ;
 valOf a = case a of
   Just x -> x ;
   Nothing -> [] ;
+
+
+xx =
+    let y = [] in
+    let z = 3
+    in case z:y of
+        [] -> Nothing;
+        y:z -> Just (y:z);
