@@ -6,15 +6,15 @@ evalAExp :: State -> AExp -> Integer
 evalAExp state e = case e of
     Loc s               -> valof state s
     Num n               -> n
-    AOp ("+", e1, e2)   -> (evalAExp state e1) + (evalAExp state e2)
-    AOp ("-", e1, e2)   -> (evalAExp state e1) - (evalAExp state e2)
-    AOp ("*", e1, e2)   -> (evalAExp state e1) * (evalAExp state e2)
+    AOp ("+", e1, e2)   -> evalAExp state e1 + evalAExp state e2
+    AOp ("-", e1, e2)   -> evalAExp state e1 - evalAExp state e2
+    AOp ("*", e1, e2)   -> evalAExp state e1 * evalAExp state e2
 
 evalBExp :: State -> BExp -> Bool
 evalBExp state e = case e of
     Boolean b           -> b
-    BOp ("==", e1, e2)  -> (evalAExp state e1) == (evalAExp state e2)
-    BOp ( "<", e1, e2)  -> (evalAExp state e1) < (evalAExp state e2)
+    BOp ("==", e1, e2)  -> evalAExp state e1 == evalAExp state e2
+    BOp ( "<", e1, e2)  -> evalAExp state e1 < evalAExp state e2
 
 evalCom :: State -> Com -> State
 evalCom state c = case c of
