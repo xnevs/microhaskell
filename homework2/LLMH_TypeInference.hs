@@ -112,15 +112,17 @@ inferType tenv Nthg as =
 
 inferType tenv (MybCase (exp0,y,exp1,exp2)) as =
     let (s0, t0, as0) = inferType tenv exp0 as
+        tenv' = typeSubstTEnv tenv s0
         a1' = freshtvar as0
         s0' = mgu t0 (Myb $ TypeVar a1')
         t0' = typeSubst t0 s0'
+        tenv'' = typeSubstTEnv tenv' s0'
         as0' = a1':as0
 
-        tenv1 = updateTEnv (typeSubstTEnv (typeSubstTEnv tenv s0) s0') y (TypeVar a1')
+        tenv1 = updateTEnv tenv'' y (TypeVar a1')
         (p1,t1',as1') = inferType tenv1 exp1 as0'
 
-        tenv2 = typeSubstTEnv (typeSubstTEnv (typeSubstTEnv tenv s0) s0') p1
+        tenv2 = typeSubstTEnv tenv'' p1
         (s2,t2,as2') = inferType tenv2 exp2 as1'
         s2' = mgu t1' t2
         p2 = composeSubstList [p1,s2,s2']
