@@ -95,3 +95,4 @@ evaluate env (ListCase (exp,exp1,y,z,exp2)) =
                 then expsubst (expsubst exp2 y exp1') z exp2'
                 else let z' = freshen z ys
                      in expsubst (expsubst (expsubst exp2 z (Var z')) y exp1') z' exp2'
+

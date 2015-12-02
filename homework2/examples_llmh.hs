@@ -63,9 +63,9 @@ valOf a = case a of
   Nothing -> [] ;
 
 
+y=[];
+z = 3;
 xx =
-    let y = [] in
-    let z = 3
-    in case z:y of
-        [] -> Nothing;
-        y:z -> Just (y:z);
+    case z:y of
+        [] -> [];
+        y:z -> y:z;
