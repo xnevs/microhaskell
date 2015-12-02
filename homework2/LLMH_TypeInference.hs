@@ -118,10 +118,7 @@ inferType tenv (MybCase (exp0,y,exp1,exp2)) as =
         as0' = a1':as0
 
         tenv1 = updateTEnv (typeSubstTEnv (typeSubstTEnv tenv s0) s0') y (TypeVar a1')
-        (s1,t1,as1') = inferType tenv1 exp1 as0'
-        s1' = []
-        p1 = composeSubst s1 s1'
-        t1' = typeSubst t1 s1'
+        (p1,t1',as1') = inferType tenv1 exp1 as0'
 
         tenv2 = typeSubstTEnv (typeSubstTEnv (typeSubstTEnv tenv s0) s0') p1
         (s2,t2,as2') = inferType tenv2 exp2 as1'
@@ -130,7 +127,7 @@ inferType tenv (MybCase (exp0,y,exp1,exp2)) as =
         t2' = typeSubst t2 s2'
         
         s = composeSubstList [s0,s0',p2]
-    in  s0' `seq` s1' `seq` s2' `seq` (s, t2', as2')
+    in  s0' `seq` s2' `seq` (s, t2', as2')
 
 inferType tenv Nil as =
     let a = freshtvar as
@@ -153,10 +150,7 @@ inferType tenv (ListCase (exp0,exp1,y,z,exp2)) as =
         as0' = a1':as0
 
         tenv1 = typeSubstTEnv (typeSubstTEnv tenv s0) s0'
-        (s1,t1,as1') = inferType tenv1 exp1 as0'
-        s1' = []
-        p1 = composeSubst s1 s1'
-        t1' = typeSubst t1 s1'
+        (p1,t1',as1') = inferType tenv1 exp1 as0'
 
         tenv2 = updateTEnv (updateTEnv (typeSubstTEnv (typeSubstTEnv (typeSubstTEnv tenv s0) s0') p1) y (TypeVar a1')) z (List $ TypeVar a1')
         (s2,t2,as2') = inferType tenv2 exp2 as1'
@@ -165,4 +159,4 @@ inferType tenv (ListCase (exp0,exp1,y,z,exp2)) as =
         t2' = typeSubst t2 s2'
         
         s = composeSubstList [s0,s0',p2]
-    in  s0' `seq` s1' `seq` s2' `seq` (s, t2', as2')
+    in  s0' `seq` s2' `seq` (s, t2', as2')

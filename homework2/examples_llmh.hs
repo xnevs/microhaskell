@@ -56,3 +56,8 @@ sieve l =
     x : xs -> x : (sieve (fltr (\n -> neg (divides x n)) xs)) ;
 
 primes = sieve (from 2) ;
+
+
+valOf a = case a of
+  Just x -> x ;
+  Nothing -> [] ;
