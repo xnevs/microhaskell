@@ -171,5 +171,5 @@ inferType tenv (ListCase (exp0,exp1,y,z,exp2)) as =
         t2' = typeSubst t2 s2'
         
         s = composeSubstList [s0,s0',p2]
-    in  s0' `seq` s2' `seq` (s, t2', as2')
+    in  s0' `seq` s2' `seq` (restrict s (tvarsTEnv tenv), t2', as2')
 
